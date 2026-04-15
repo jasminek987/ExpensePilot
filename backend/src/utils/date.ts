@@ -24,8 +24,6 @@ export const getDateRange = (
   }
 
   const now = new Date();
-
-  // const yesterday = subDays(now.setHours(0, 0, 0, 0), 1);
   const today = endOfDay(now);
   const last30Days = {
     from: subDays(today, 29),
@@ -33,16 +31,10 @@ export const getDateRange = (
     value: DateRangeEnum.LAST_30_DAYS,
     label: "Last 30 Days",
   };
-  console.log(last30Days, "last30");
 
   switch (preset) {
     case DateRangeEnum.ALL_TIME:
-      return {
-        from: null,
-        to: null,
-        value: DateRangeEnum.ALL_TIME,
-        label: "All Time",
-      };
+      return { from: null, to: null, value: DateRangeEnum.ALL_TIME, label: "All Time" };
     case DateRangeEnum.LAST_30_DAYS:
       return last30Days;
     case DateRangeEnum.LAST_MONTH:

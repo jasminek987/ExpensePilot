@@ -316,7 +316,6 @@ export const scanReceiptService = async (
       receiptUrl: file.path,
     };
   } catch (error) {
-  console.log("GEMINI SCAN ERROR:", error);
   return { error: "Receipt scanning service unavailable" };
 }
 };

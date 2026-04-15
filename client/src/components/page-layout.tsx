@@ -3,38 +3,42 @@ import PageHeader from "./page-header";
 
 interface PropsType {
   children: React.ReactNode;
-  className?: string
+  className?: string;
   title?: string;
   subtitle?: string;
   rightAction?: React.ReactNode;
   showHeader?: boolean;
   addMarginTop?: boolean;
-  renderPageHeader?: React.ReactNode
+  renderPageHeader?: React.ReactNode;
 }
 
-const PageLayout = ({ children, className,
+const PageLayout = ({
+  children,
+  className,
   title,
   subtitle,
   rightAction,
   showHeader = true,
   addMarginTop = false,
   renderPageHeader,
- }: PropsType) => {
+}: PropsType) => {
   return (
-    <div>
+    <div className="min-h-screen bg-background">
       {showHeader && (
-        <PageHeader 
-          title={title} 
-          subtitle={subtitle} 
-          rightAction={rightAction} 
+        <PageHeader
+          title={title}
+          subtitle={subtitle}
+          rightAction={rightAction}
           renderPageHeader={renderPageHeader}
         />
       )}
-    <div className={cn("w-full max-w-[var(--max-width)] mx-auto pt-8",
-      addMarginTop && "-mt-20",
-      className)}>
-      {children}
-    </div>
+      <div className={cn(
+        "w-full max-w-[var(--max-width)] mx-auto pt-8 px-5 lg:px-0",
+        addMarginTop && "-mt-8",
+        className
+      )}>
+        {children}
+      </div>
     </div>
   );
 };

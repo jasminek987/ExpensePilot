@@ -7,6 +7,8 @@ import Reports from "@/pages/reports";
 import Settings from "@/pages/settings";
 import Account from "@/pages/settings/account";
 import Appearance from "@/pages/settings/appearance";
+import AddTransaction from "@/pages/add-transaction";
+
 
 export const authenticationRoutePaths = [
   { path: AUTH_ROUTES.SIGN_IN, element: <SignIn /> },
@@ -16,14 +18,15 @@ export const authenticationRoutePaths = [
 export const protectedRoutePaths = [
   { path: PROTECTED_ROUTES.OVERVIEW, element: <Dashboard /> },
   { path: PROTECTED_ROUTES.TRANSACTIONS, element: <Transactions /> },
+  { path: PROTECTED_ROUTES.ADD_TRANSACTION, element: <AddTransaction /> },
   { path: PROTECTED_ROUTES.REPORTS, element: <Reports /> },
-  { path: PROTECTED_ROUTES.SETTINGS, 
-    element: <Settings /> ,
+  {
+    path: PROTECTED_ROUTES.SETTINGS,
+    element: <Settings />,
     children: [
-      { index: true, element: <Account /> }, // Default route
+      { index: true, element: <Account /> },
       { path: PROTECTED_ROUTES.SETTINGS, element: <Account /> },
       { path: PROTECTED_ROUTES.SETTINGS_APPEARANCE, element: <Appearance /> },
-      
     ]
   },
 ];

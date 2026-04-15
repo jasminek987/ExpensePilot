@@ -15,8 +15,8 @@ const DashboardSummary = ({
   return (
     <div className="w-full">
       <DashboardHeader
-        title={`Welcome back, ${user?.name || "Unknow"}`}
-        subtitle="This is your overview report for the selected period"
+        title={`Welcome back, ${user?.name || "User"}`}
+        subtitle="Here's a summary of your expenses for the selected period."
         dateRange={dateRange}
         setDateRange={setDateRange}
       />

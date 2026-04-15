@@ -55,22 +55,15 @@ const formSchema = z.object({
   }),
   type: z.enum([_TRANSACTION_TYPE.INCOME, _TRANSACTION_TYPE.EXPENSE]),
   category: z.string().min(1, { message: "Please select a category." }),
-  date: z.date({
-    required_error: "Please select a date.",
-  }),
-  paymentMethod: z
-    .string()
-    .min(1, { message: "Please select a payment method." }),
+  date: z.date({ required_error: "Please select a date." }),
+  paymentMethod: z.string().min(1, { message: "Please select a payment method." }),
   isRecurring: z.boolean(),
-  frequency: z
-    .enum([
-      _TRANSACTION_FREQUENCY.DAILY,
-      _TRANSACTION_FREQUENCY.WEEKLY,
-      _TRANSACTION_FREQUENCY.MONTHLY,
-      _TRANSACTION_FREQUENCY.YEARLY,
-    ])
-    .nullable()
-    .optional(),
+  frequency: z.enum([
+    _TRANSACTION_FREQUENCY.DAILY,
+    _TRANSACTION_FREQUENCY.WEEKLY,
+    _TRANSACTION_FREQUENCY.MONTHLY,
+    _TRANSACTION_FREQUENCY.YEARLY,
+  ]).nullable().optional(),
   description: z.string().optional(),
   receiptUrl: z.string().optional(),
 });
@@ -83,7 +76,6 @@ const TransactionForm = (props: {
   onCloseDrawer?: () => void;
 }) => {
   const { onCloseDrawer, isEdit = false, transactionId } = props;
-
   const [isScanning, setIsScanning] = useState(false);
 
   const { data, isLoading } = useGetSingleTransactionQuery(
@@ -92,11 +84,8 @@ const TransactionForm = (props: {
   );
   const editData = data?.transaction;
 
-  const [createTransaction, { isLoading: isCreating }] =
-    useCreateTransactionMutation();
-
-  const [updateTransaction, { isLoading: isUpdating }] =
-    useUpdateTransactionMutation();
+  const [createTransaction, { isLoading: isCreating }] = useCreateTransactionMutation();
+  const [updateTransaction, { isLoading: isUpdating }] = useUpdateTransactionMutation();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -139,15 +128,10 @@ const TransactionForm = (props: {
   );
 
   const handleScanComplete = (data: AIScanReceiptData) => {
-    console.log("SCAN DATA IN FORM:", data);
-
     form.reset({
       ...form.getValues(),
       title: data?.title || "",
-      amount:
-        data?.amount !== undefined && data?.amount !== null
-          ? data.amount.toString()
-          : "",
+      amount: data?.amount !== undefined && data?.amount !== null ? data.amount.toString() : "",
       type: data?.type || _TRANSACTION_TYPE.EXPENSE,
       category: data?.category?.toLowerCase() || "",
       date: data?.date ? new Date(data.date) : new Date(),
@@ -159,10 +143,7 @@ const TransactionForm = (props: {
     });
   };
 
-  // Handle form submission
   const onSubmit = (values: FormValues) => {
-    // if (isCreating || isUpdating) return;
-    console.log("Form submitted:", values);
     const payload = {
       title: values.title,
       type: values.type,
@@ -174,6 +155,7 @@ const TransactionForm = (props: {
       isRecurring: values.isRecurring || false,
       recurringInterval: values.frequency || null,
     };
+
     if (isEdit && transactionId) {
       updateTransaction({ id: transactionId, transaction: payload })
         .unwrap()
@@ -182,16 +164,11 @@ const TransactionForm = (props: {
           toast.success("Transaction updated successfully");
         })
         .catch((error) => {
-          console.log("UPDATE ERROR:", error);
-          toast.error(
-            error?.data?.message ||
-              error?.message ||
-              JSON.stringify(error) ||
-              "Failed to update transaction"
-          );
+          toast.error(error?.data?.message || error?.message || "Failed to update transaction");
         });
       return;
     }
+
     createTransaction(payload)
       .unwrap()
       .then(() => {
@@ -200,13 +177,7 @@ const TransactionForm = (props: {
         toast.success("Transaction created successfully");
       })
       .catch((error) => {
-        console.log("CREATE ERROR:", error);
-        toast.error(
-          error?.data?.message ||
-            error?.message ||
-            JSON.stringify(error) ||
-            "Failed to create transaction"
-        );
+        toast.error(error?.data?.message || error?.message || "Failed to create transaction");
       });
   };
 
@@ -215,7 +186,6 @@ const TransactionForm = (props: {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 px-4">
           <div className="space-y-6">
-            {/* Receipt Upload Section */}
             {!isEdit && (
               <RecieptScanner
                 loadingChange={isScanning}
@@ -224,7 +194,6 @@ const TransactionForm = (props: {
               />
             )}
 
-            {/* Transaction Type */}
             <FormField
               control={form.control}
               name="type"
@@ -240,38 +209,21 @@ const TransactionForm = (props: {
                     <label
                       htmlFor={_TRANSACTION_TYPE.INCOME}
                       className={cn(
-                        `text-sm font-normal leading-none cursor-pointer
-                        flex items-center space-x-2 rounded-md 
-                        shadow-sm border p-2 flex-1 justify-center 
-                        `,
-                        field.value === _TRANSACTION_TYPE.INCOME &&
-                          "!border-primary"
+                        "text-sm font-normal leading-none cursor-pointer flex items-center space-x-2 rounded-md shadow-sm border p-2 flex-1 justify-center",
+                        field.value === _TRANSACTION_TYPE.INCOME && "!border-primary"
                       )}
                     >
-                      <RadioGroupItem
-                        value={_TRANSACTION_TYPE.INCOME}
-                        id={_TRANSACTION_TYPE.INCOME}
-                        className="!border-primary"
-                      />
+                      <RadioGroupItem value={_TRANSACTION_TYPE.INCOME} id={_TRANSACTION_TYPE.INCOME} className="!border-primary" />
                       Income
                     </label>
-
                     <label
                       htmlFor={_TRANSACTION_TYPE.EXPENSE}
                       className={cn(
-                        `text-sm font-normal leading-none cursor-pointer
-                        flex items-center space-x-2 rounded-md 
-                        shadow-sm border p-2 flex-1 justify-center 
-                        `,
-                        field.value === _TRANSACTION_TYPE.EXPENSE &&
-                          "!border-primary"
+                        "text-sm font-normal leading-none cursor-pointer flex items-center space-x-2 rounded-md shadow-sm border p-2 flex-1 justify-center",
+                        field.value === _TRANSACTION_TYPE.EXPENSE && "!border-primary"
                       )}
                     >
-                      <RadioGroupItem
-                        value={_TRANSACTION_TYPE.EXPENSE}
-                        id={_TRANSACTION_TYPE.EXPENSE}
-                        className="!border-primary"
-                      />
+                      <RadioGroupItem value={_TRANSACTION_TYPE.EXPENSE} id={_TRANSACTION_TYPE.EXPENSE} className="!border-primary" />
                       Expense
                     </label>
                   </RadioGroup>
@@ -280,7 +232,6 @@ const TransactionForm = (props: {
               )}
             />
 
-            {/* Title */}
             <FormField
               control={form.control}
               name="title"
@@ -288,18 +239,13 @@ const TransactionForm = (props: {
                 <FormItem>
                   <FormLabel className="!font-normal">Title</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Transaction title"
-                      {...field}
-                      disabled={isScanning}
-                    />
+                    <Input placeholder="Transaction title" {...field} disabled={isScanning} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            {/* Amount */}
             <FormField
               control={form.control}
               name="amount"
@@ -322,7 +268,6 @@ const TransactionForm = (props: {
               )}
             />
 
-            {/* Category */}
             <FormField
               control={form.control}
               name="category"
@@ -331,8 +276,7 @@ const TransactionForm = (props: {
                   <FormLabel>Category</FormLabel>
                   <SingleSelector
                     value={
-                      CATEGORIES.find((opt) => opt.value === field.value) ||
-                      field.value
+                      CATEGORIES.find((opt) => opt.value === field.value) || field.value
                         ? { value: field.value, label: field.value }
                         : undefined
                     }
@@ -347,7 +291,6 @@ const TransactionForm = (props: {
               )}
             />
 
-            {/* Date */}
             <FormField
               control={form.control}
               name="date"
@@ -358,32 +301,19 @@ const TransactionForm = (props: {
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
-                          variant={"outline"}
-                          className={cn(
-                            "w-full pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground"
-                          )}
+                          variant="outline"
+                          className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}
                         >
-                          {field.value ? (
-                            format(field.value, "PPP")
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
+                          {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
                           <Calendar className="ml-auto h-4 w-4 opacity-50" />
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
-                    <PopoverContent
-                      className="w-auto p-0 !pointer-events-auto"
-                      align="start"
-                    >
+                    <PopoverContent className="w-auto p-0 !pointer-events-auto" align="start">
                       <CalendarComponent
                         mode="single"
                         selected={field.value}
-                        onSelect={(date) => {
-                          console.log(date);
-                          field.onChange(date); // This updates the form value
-                        }}
+                        onSelect={field.onChange}
                         disabled={(date) => date < new Date("2023-01-01")}
                         initialFocus
                       />
@@ -394,18 +324,13 @@ const TransactionForm = (props: {
               )}
             />
 
-            {/* Payment Method */}
             <FormField
               control={form.control}
               name="paymentMethod"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Payment Method</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    disabled={isScanning}
-                  >
+                  <Select onValueChange={field.onChange} value={field.value} disabled={isScanning}>
                     <FormControl className="w-full">
                       <SelectTrigger>
                         <SelectValue placeholder="Select payment method" />
@@ -413,9 +338,7 @@ const TransactionForm = (props: {
                     </FormControl>
                     <SelectContent>
                       {PAYMENT_METHODS.map((method) => (
-                        <SelectItem key={method.value} value={method.value}>
-                          {method.label}
-                        </SelectItem>
+                        <SelectItem key={method.value} value={method.value}>{method.label}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -430,13 +353,9 @@ const TransactionForm = (props: {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-[14.5px]">
-                      Recurring Transaction
-                    </FormLabel>
+                    <FormLabel className="text-[14.5px]">Recurring Transaction</FormLabel>
                     <p className="text-xs text-muted-foreground">
-                      {field.value
-                        ? "This will repeat automatically"
-                        : "Set recurring to repeat this transaction"}
+                      {field.value ? "This will repeat automatically" : "Set recurring to repeat this transaction"}
                     </p>
                   </div>
                   <FormControl>
@@ -446,14 +365,7 @@ const TransactionForm = (props: {
                       className="cursor-pointer"
                       onCheckedChange={(checked) => {
                         field.onChange(checked);
-                        if (checked) {
-                          form.setValue(
-                            "frequency",
-                            _TRANSACTION_FREQUENCY.DAILY
-                          );
-                        } else {
-                          form.setValue("frequency", null);
-                        }
+                        form.setValue("frequency", checked ? _TRANSACTION_FREQUENCY.DAILY : null);
                       }}
                     />
                   </FormControl>
@@ -461,35 +373,22 @@ const TransactionForm = (props: {
               )}
             />
 
-            {form.watch("isRecurring") && form.getValues().isRecurring && (
+            {form.watch("isRecurring") && (
               <FormField
                 control={form.control}
                 name="frequency"
                 render={({ field }) => (
                   <FormItem className="recurring-control">
                     <FormLabel>Frequency</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value ?? undefined}
-                      disabled={isScanning}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value ?? undefined} disabled={isScanning}>
                       <FormControl className="w-full">
                         <SelectTrigger>
-                          <SelectValue
-                            placeholder="Select frequency"
-                            className="!capitalize"
-                          />
+                          <SelectValue placeholder="Select frequency" className="!capitalize" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
                         {frequencyOptions.map(({ value, label }) => (
-                          <SelectItem
-                            key={value}
-                            value={value}
-                            className="!capitalize"
-                          >
-                            {label}
-                          </SelectItem>
+                          <SelectItem key={value} value={value} className="!capitalize">{label}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -498,7 +397,7 @@ const TransactionForm = (props: {
                 )}
               />
             )}
-            {/* Description */}
+
             <FormField
               control={form.control}
               name="description"
@@ -519,21 +418,19 @@ const TransactionForm = (props: {
             />
           </div>
 
-          <div className="sticky bottom-0 bg-white dark:bg-background pb-2">
+          <div className="sticky bottom-0 bg-background pb-2">
             <Button
               type="submit"
               className="w-full !text-white"
               disabled={isScanning || isCreating || isUpdating}
             >
-              {isCreating || isUpdating ? (
-                <Loader className="h-4 w-4 animate-spin" />
-              ) : null}
+              {isCreating || isUpdating ? <Loader className="h-4 w-4 animate-spin" /> : null}
               {isEdit ? "Update" : "Save"}
             </Button>
           </div>
 
           {isLoading && (
-            <div className="absolute top-0 left-0 right-0 bottom-0 bg-white/70 dark:bg-background/70 z-50 flex justify-center">
+            <div className="absolute top-0 left-0 right-0 bottom-0 bg-background/70 z-50 flex justify-center">
               <Loader className="h-8 w-8 animate-spin" />
             </div>
           )}
