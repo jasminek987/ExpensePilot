@@ -52,10 +52,45 @@ Services:
     /features  
     /hooks  
 
-## Setup
+## How to Run
 
-Clone repository:
+### Prerequisites
+- Node.js (v18+)
+- MongoDB Atlas account (or local MongoDB)
+- Google Gemini API key
+- Cloudinary account
 
-```bash
-git clone <repo-url>
-cd ExpensePilot
+### Setup
+
+1. Extract the zip file and open the project folder
+
+2. Install backend dependencies
+   cd backend
+   npm install
+
+3. Install frontend dependencies
+   cd client
+   npm install
+
+4. Create a .env file in /backend with:
+   MONGO_URI=your_mongodb_connection_string
+   JWT_SECRET=your_jwt_secret
+   GEMINI_API_KEY=your_gemini_key
+   CLOUDINARY_CLOUD_NAME=your_cloud_name
+   CLOUDINARY_API_KEY=your_key
+   CLOUDINARY_API_SECRET=your_secret
+
+5. Run the backend
+   cd backend
+   npm run dev
+
+6. Run the frontend
+   cd client
+   npm run dev
+
+7. Open http://localhost:5173 in your browser
+
+## Additional Notes
+- A .env.example file is included — copy it to .env and fill in your keys
+- Gemini API free tier is sufficient to run this project
+- Receipt scanning requires a valid image upload (JPEG/PNG)
